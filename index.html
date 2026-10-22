@@ -1,0 +1,662 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#101526">
+<title>BLOCK POP</title>
+<style>
+:root {
+  --bg: #101526;
+  --panel: #1b2440;
+  --cell: #293452;
+  --accent: #68e1fd;
+  --text: #f4f7ff;
+  --muted: #9eaccb;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #26375e, var(--bg) 55%);
+  color: var(--text);
+  font-family: system-ui, -apple-system, sans-serif;
+  display: flex;
+  justify-content: center;
+  overscroll-behavior: none;
+}
+button { font: inherit; touch-action: manipulation; }
+.app {
+  width: 100%;
+  max-width: 520px;
+  padding: 18px 14px 24px;
+}
+header { text-align: center; margin-bottom: 15px; }
+.logo {
+  font-size: clamp(32px, 9vw, 46px);
+  font-weight: 1000;
+  letter-spacing: 3px;
+  line-height: 1.1;
+  color: #fff;
+  text-shadow: 0 0 18px #68e1fd55;
+}
+.logo span { color: var(--accent); }
+.subtitle {
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 3px;
+  margin-top: 5px;
+}
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+.stat {
+  background: #1b2440dd;
+  border: 1px solid #354467;
+  border-radius: 14px;
+  padding: 10px;
+  text-align: center;
+}
+.stat-label { color: var(--muted); font-size: 11px; }
+.stat-value { font-size: 25px; font-weight: 850; font-variant-numeric: tabular-nums; }
+.panel {
+  background: #1b2440dd;
+  border: 1px solid #354467;
+  border-radius: 17px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+.meter-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 7px;
+}
+.muted { color: var(--muted); }
+.meter {
+  height: 9px;
+  background: #10182c;
+  border-radius: 99px;
+  overflow: hidden;
+}
+.meter-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #68e1fd, #a58bff);
+  transition: width .2s;
+}
+.board-wrap { position: relative; }
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 4px;
+  padding: 7px;
+  background: #0d1426;
+  border: 1px solid #354467;
+  border-radius: 14px;
+  aspect-ratio: 1;
+  width: 100%;
+  user-select: none;
+}
+.cell {
+  min-width: 0;
+  min-height: 0;
+  border-radius: 5px;
+  background: var(--cell);
+  border: 1px solid #354363;
+  transition: background .12s;
+}
+.cell.filled {
+  background: var(--block-color, #68e1fd);
+  border: 1px solid #ffffff55;
+  box-shadow: inset 0 1px 0 #ffffff38;
+}
+.cell.lucky {
+  background: linear-gradient(135deg, #ffe77a, #ff9f43);
+  border-color: #fff2ae;
+  position: relative;
+}
+.cell.lucky::after {
+  content: "★";
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: #7a3d13;
+  font-size: clamp(9px, 2.7vw, 17px);
+  font-weight: 1000;
+}
+.cell.hint {
+  outline: 2px solid #68e1fd;
+  outline-offset: -2px;
+}
+.message {
+  min-height: 25px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  padding: 5px 0 0;
+}
+.pieces-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 800;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+.pieces {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+.piece {
+  min-width: 0;
+  min-height: 100px;
+  padding: 8px 3px;
+  background: #121b31;
+  border: 2px solid #344361;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  cursor: pointer;
+}
+.piece.selected {
+  border-color: var(--accent);
+  background: #20334d;
+  box-shadow: 0 0 12px #68e1fd33;
+}
+.piece.used { opacity: .3; cursor: default; }
+.piece.lucky-piece { border-color: #bd9251; }
+.piece-caption { font-size: 10px; color: var(--muted); }
+.mini-grid {
+  display: grid;
+  gap: 3px;
+  justify-content: center;
+  align-content: center;
+  min-height: 44px;
+}
+.mini-cell {
+  width: clamp(10px, 3.4vw, 16px);
+  height: clamp(10px, 3.4vw, 16px);
+  max-width: 16px;
+  max-height: 16px;
+  border-radius: 3px;
+  background: var(--piece-color, #68e1fd);
+  border: 1px solid #ffffff55;
+}
+.mini-cell.empty { background: transparent; border-color: transparent; }
+.mini-cell.star {
+  background: linear-gradient(135deg, #ffe77a, #ff9f43);
+  position: relative;
+}
+.mini-cell.star::after {
+  content: "★";
+  color: #7a3d13;
+  display: grid;
+  place-items: center;
+  height: 100%;
+  font-size: 10px;
+}
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 11px;
+}
+.action {
+  border: 1px solid #435579;
+  background: #273655;
+  color: var(--text);
+  padding: 11px 8px;
+  border-radius: 11px;
+  font-weight: 750;
+  cursor: pointer;
+}
+.action.primary {
+  color: #0e1a2c;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.action:disabled { opacity: .4; cursor: default; }
+.rules {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.8;
+  padding: 0 3px;
+}
+.rules strong { color: var(--text); }
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: #080d1bd9;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 22px;
+  z-index: 10;
+}
+.overlay.show { display: flex; }
+.dialog {
+  width: 100%;
+  max-width: 340px;
+  padding: 25px 20px;
+  border-radius: 22px;
+  text-align: center;
+  background: #1b2440;
+  border: 1px solid #4b6088;
+  box-shadow: 0 15px 60px #0008;
+}
+.dialog h2 { margin: 0 0 8px; font-size: 28px; }
+.dialog p { color: var(--muted); }
+.dialog .action { width: 100%; margin-top: 8px; }
+@media (max-width: 360px) {
+  .app { padding: 12px 9px 20px; }
+  .board { gap: 3px; padding: 5px; }
+  .piece { min-height: 90px; }
+}
+</style>
+</head>
+<body>
+<main class="app">
+  <header>
+    <div class="logo">BLOCK <span>POP</span></div>
+    <div class="subtitle">PLACE · CLEAR · COMBO</div>
+  </header>
+
+  <section class="stats">
+    <div class="stat">
+      <div class="stat-label">SCORE</div>
+      <div class="stat-value" id="score">0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">BEST</div>
+      <div class="stat-value" id="best">0</div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="meter-head">
+      <span>⚡ エネルギー <strong id="energy">5</strong></span>
+      <span id="combo-label">コンボ 0 / 3</span>
+    </div>
+    <div class="meter"><div class="meter-fill" id="combo-fill"></div></div>
+  </section>
+
+  <section class="board-wrap">
+    <div class="board" id="board" aria-label="8×8のゲーム盤"></div>
+  </section>
+  <div class="message" id="message">ブロックを選んで、盤面に置こう！</div>
+
+  <section class="panel">
+    <div class="pieces-title">
+      <span>ブロックを選択</span>
+      <span class="muted" id="pieces-left">残り 3 個</span>
+    </div>
+    <div class="pieces" id="pieces"></div>
+    <div class="controls">
+      <button class="action" id="erase-btn">⚡ 1マス消す（5）</button>
+      <button class="action" id="restart-btn">↻ リスタート</button>
+    </div>
+  </section>
+
+  <section class="rules">
+    <strong>遊び方</strong><br>
+    ・ブロックを選び、盤面の置きたい場所をタップ！<br>
+    ・横一列または縦一列が埋まると、その列が消えるよ。<br>
+    ・3列消すとコンボ発動！ 次に置くブロックの得点が2倍。<br>
+    ・★ラッキーブロックを消すと追加で250点！<br>
+    ・盤面を全部空にすると5000点ボーナス！<br>
+    ・⚡エネルギー5で、埋まったマスを1つ消せるよ。
+  </section>
+</main>
+
+<div class="overlay" id="game-over">
+  <div class="dialog">
+    <h2>GAME OVER</h2>
+    <p>置けるブロックがなくなったよ。</p>
+    <div>今回のスコア</div>
+    <div class="stat-value" id="final-score">0</div>
+    <button class="action primary" id="again-btn">もう一度プレイ</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const SIZE = 8;
+  const COLORS = [
+    "#68e1fd", "#a58bff", "#ff7da8",
+    "#7ce7a4", "#ffbd69", "#72a7ff"
+  ];
+
+  // 3×3ブロックは出現率を控えめに設定
+  const SHAPES = [
+    { name: "シングル", cells: [[0,0]], weight: 8 },
+    { name: "3マス棒", cells: [[0,0],[1,0],[2,0]], weight: 7 },
+    { name: "4マス棒", cells: [[0,0],[1,0],[2,0],[3,0]], weight: 5 },
+    { name: "2×2", cells: [[0,0],[1,0],[0,1],[1,1]], weight: 8 },
+    { name: "L字", cells: [[0,0],[0,1],[0,2],[1,2]], weight: 3 },
+    { name: "3×2", cells: [[0,0],[1,0],[2,0],[0,1],[1,1],[2,1]], weight: 7 },
+    { name: "3×3", cells: [
+      [0,0],[1,0],[2,0],
+      [0,1],[1,1],[2,1],
+      [0,2],[1,2],[2,2]
+    ], weight: 2 },
+    { name: "T字", cells: [[0,0],[1,0],[2,0],[1,1]], weight: 7 },
+    { name: "2マス棒", cells: [[0,0],[1,0]], weight: 7 }
+  ];
+
+  const $ = id => document.getElementById(id);
+  let board, pieces, selected, score, best, energy, combo, doubleNext;
+  let eraseMode, gameOver, luckyCounter;
+  let lastActionMessage = "";
+
+  try {
+    best = Number(localStorage.getItem("blockPopBest")) || 0;
+  } catch (_) {
+    best = 0;
+  }
+
+  function freshBoard() {
+    return Array.from({ length: SIZE }, () => Array(SIZE).fill(null));
+  }
+
+  function weightedShape() {
+    const total = SHAPES.reduce((sum, shape) => sum + shape.weight, 0);
+    let roll = Math.random() * total;
+    for (const shape of SHAPES) {
+      roll -= shape.weight;
+      if (roll < 0) return shape;
+    }
+    return SHAPES[0];
+  }
+
+  function createPiece() {
+    const shape = weightedShape();
+    const lucky = (++luckyCounter % 5 === 0) || Math.random() < 0.08;
+    return {
+      name: shape.name,
+      cells: shape.cells.map(([x,y]) => [x,y]),
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      lucky,
+      used: false
+    };
+  }
+
+  function dimensions(piece) {
+    return {
+      width: Math.max(...piece.cells.map(c => c[0])) + 1,
+      height: Math.max(...piece.cells.map(c => c[1])) + 1
+    };
+  }
+
+  function init() {
+    board = freshBoard();
+    pieces = [];
+    selected = -1;
+    score = 0;
+    energy = 5;
+    combo = 0;
+    doubleNext = false;
+    eraseMode = false;
+    gameOver = false;
+    luckyCounter = 0;
+    lastActionMessage = "";
+    $("game-over").classList.remove("show");
+    newPieces();
+    render();
+    setMessage("ブロックを選んで、盤面に置こう！");
+  }
+
+  function newPieces() {
+    pieces = [createPiece(), createPiece(), createPiece()];
+    selected = -1;
+  }
+
+  function setMessage(text) {
+    $("message").textContent = text;
+  }
+
+  function updateScore(points) {
+    score += points;
+    if (score > best) {
+      best = score;
+      try { localStorage.setItem("blockPopBest", String(best)); } catch (_) {}
+    }
+  }
+
+  function canPlace(piece, x, y) {
+    return piece.cells.every(([dx,dy]) => {
+      const xx = x + dx, yy = y + dy;
+      return xx >= 0 && xx < SIZE && yy >= 0 && yy < SIZE && !board[yy][xx];
+    });
+  }
+
+  function anyMoveAvailable() {
+    return pieces.some(piece => {
+      if (piece.used) return false;
+      for (let y = 0; y < SIZE; y++) {
+        for (let x = 0; x < SIZE; x++) {
+          if (canPlace(piece, x, y)) return true;
+        }
+      }
+      return false;
+    });
+  }
+
+  function renderBoard() {
+    const root = $("board");
+    root.innerHTML = "";
+    for (let y = 0; y < SIZE; y++) {
+      for (let x = 0; x < SIZE; x++) {
+        const cell = document.createElement("button");
+        cell.type = "button";
+        cell.className = "cell";
+        cell.setAttribute("aria-label", `行${y+1} 列${x+1}`);
+        const data = board[y][x];
+        if (data) {
+          cell.classList.add("filled");
+          cell.style.setProperty("--block-color", data.color);
+          if (data.lucky) cell.classList.add("lucky");
+        }
+        cell.addEventListener("click", () => onCellClick(x, y));
+        root.appendChild(cell);
+      }
+    }
+  }
+
+  function renderPieces() {
+    const root = $("pieces");
+    root.innerHTML = "";
+    pieces.forEach((piece, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "piece";
+      if (piece.used) button.classList.add("used");
+      if (selected === index) button.classList.add("selected");
+      if (piece.lucky) button.classList.add("lucky-piece");
+      button.disabled = piece.used || gameOver;
+      button.setAttribute("aria-label", `${piece.name}${piece.lucky ? " ラッキーブロック" : ""}`);
+
+      const {width, height} = dimensions(piece);
+      const grid = document.createElement("div");
+      grid.className = "mini-grid";
+      grid.style.gridTemplateColumns = `repeat(${width}, 1fr)`;
+      grid.style.gridTemplateRows = `repeat(${height}, 1fr)`;
+      const occupied = new Set(piece.cells.map(([x,y]) => `${x},${y}`));
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const mini = document.createElement("div");
+          mini.className = "mini-cell";
+          if (!occupied.has(`${x},${y}`)) {
+            mini.classList.add("empty");
+          } else if (piece.lucky) {
+            mini.classList.add("star");
+          } else {
+            mini.style.setProperty("--piece-color", piece.color);
+          }
+          grid.appendChild(mini);
+        }
+      }
+
+      const caption = document.createElement("div");
+      caption.className = "piece-caption";
+      caption.textContent = piece.used ? "使用済み" : (piece.lucky ? "★ LUCKY" : piece.name);
+      button.append(grid, caption);
+      button.addEventListener("click", () => {
+        if (piece.used || gameOver) return;
+        eraseMode = false;
+        selected = index;
+        setMessage(piece.lucky ? "★ ラッキーブロック！置く場所を選ぼう。" : "盤面の置きたい場所をタップ！");
+        render();
+      });
+      root.appendChild(button);
+    });
+    $("pieces-left").textContent = `残り ${pieces.filter(p => !p.used).length} 個`;
+  }
+
+  function render() {
+    renderBoard();
+    renderPieces();
+    $("score").textContent = score.toLocaleString();
+    $("best").textContent = best.toLocaleString();
+    $("energy").textContent = energy;
+    $("combo-label").textContent = `コンボ ${combo} / 3${doubleNext ? " · 2倍発動！" : ""}`;
+    $("combo-fill").style.width = `${Math.min(combo / 3, 1) * 100}%`;
+    $("erase-btn").disabled = energy < 5 || gameOver;
+  }
+
+  function onCellClick(x, y) {
+    if (gameOver) return;
+
+    if (eraseMode) {
+      if (!board[y][x]) {
+        setMessage("消したいブロックのマスを選んでね。");
+        return;
+      }
+      board[y][x] = null;
+      energy -= 5;
+      eraseMode = false;
+      setMessage("⚡ 1マス消した！");
+      render();
+      checkGameOver();
+      return;
+    }
+
+    if (selected < 0 || !pieces[selected] || pieces[selected].used) {
+      setMessage("先に下のブロックを選んでね！");
+      return;
+    }
+
+    const piece = pieces[selected];
+    if (!canPlace(piece, x, y)) {
+      setMessage("そこには置けないよ！別の場所を選ぼう。");
+      return;
+    }
+
+    const multiplier = doubleNext ? 2 : 1;
+    const placedCount = piece.cells.length;
+    piece.cells.forEach(([dx,dy]) => {
+      board[y + dy][x + dx] = {
+        color: piece.color,
+        lucky: piece.lucky
+      };
+    });
+
+    updateScore(placedCount * 10 * multiplier);
+    piece.used = true;
+    selected = -1;
+    doubleNext = false;
+
+    const rows = [];
+    const cols = [];
+    for (let yy = 0; yy < SIZE; yy++) {
+      if (board[yy].every(cell => cell !== null)) rows.push(yy);
+    }
+    for (let xx = 0; xx < SIZE; xx++) {
+      if (board.every(row => row[xx] !== null)) cols.push(xx);
+    }
+
+    const clearSet = new Set();
+    rows.forEach(yy => {
+      for (let xx = 0; xx < SIZE; xx++) clearSet.add(`${xx},${yy}`);
+    });
+    cols.forEach(xx => {
+      for (let yy = 0; yy < SIZE; yy++) clearSet.add(`${xx},${yy}`);
+    });
+
+    let luckyCleared = 0;
+    clearSet.forEach(key => {
+      const [xx, yy] = key.split(",").map(Number);
+      if (board[yy][xx] && board[yy][xx].lucky) luckyCleared++;
+      board[yy][xx] = null;
+    });
+
+    const lines = rows.length + cols.length;
+    if (lines > 0) {
+      updateScore(lines * 100 * multiplier);
+      if (luckyCleared > 0) {
+        updateScore(luckyCleared * 250 * multiplier);
+      }
+
+      combo += lines;
+      if (combo >= 3) {
+        combo %= 3;
+        doubleNext = true;
+      }
+      const luckyText = luckyCleared ? ` ★ボーナス +${(luckyCleared * 250 * multiplier).toLocaleString()}！` : "";
+      setMessage(`${lines}列クリア！ +${(lines * 100 * multiplier).toLocaleString()}点${luckyText}${doubleNext ? " 次の配置は2倍！" : ""}`);
+    } else {
+      setMessage(`ブロックを配置！ +${(placedCount * 10 * multiplier).toLocaleString()}点`);
+    }
+
+    // 盤面が完全に空になった場合のボーナス
+    if (board.every(row => row.every(cell => cell === null))) {
+      updateScore(5000);
+      setMessage("🎉 全消しボーナス！ +5,000点！");
+    }
+
+    if (pieces.every(p => p.used)) newPieces();
+    render();
+    checkGameOver();
+  }
+
+  function checkGameOver() {
+    if (gameOver) return;
+    if (!anyMoveAvailable()) {
+      gameOver = true;
+      $("final-score").textContent = score.toLocaleString();
+      $("game-over").classList.add("show");
+      render();
+    }
+  }
+
+  $("erase-btn").addEventListener("click", () => {
+    if (gameOver || energy < 5) return;
+    selected = -1;
+    eraseMode = true;
+    setMessage("消したいマスをタップしてね。エネルギーを5消費するよ。");
+    renderPieces();
+  });
+
+  $("restart-btn").addEventListener("click", () => {
+    if (confirm("ゲームを最初からやり直す？今回のスコアはリセットされるよ。")) init();
+  });
+  $("again-btn").addEventListener("click", init);
+
+  init();
+})();
+</script>
+</body>
+</html>
