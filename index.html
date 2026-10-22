@@ -8,832 +8,430 @@
 <title>BLOCK POP 3.2</title>
 <style>
 :root {
-  --bg: #111827;
-  --panel: #1f2937;
-  --cell: #374151;
-  --border: #465264;
-  --text: #f3f4f6;
-  --muted: #9ca3af;
-  --green: #34d399;
-  --blue: #60a5fa;
-  --purple: #a78bfa;
-  --gold: #fbbf24;
+  --bg:#111827; --panel:#1f2937; --cell:#374151;
+  --border:#465264; --text:#f3f4f6; --muted:#9ca3af;
+  --green:#34d399; --blue:#60a5fa; --purple:#8b7bd1;
+  --pink:#b56a9b; --orange:#fb923c; --gold:#fbbf24;
 }
-* { box-sizing: border-box; }
+* { box-sizing:border-box; }
 body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  -webkit-tap-highlight-color: transparent;
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  -webkit-tap-highlight-color:transparent;
 }
-button { font: inherit; }
-.app {
-  max-width: 460px;
-  margin: 0 auto;
-  padding: 12px 12px 28px;
-}
-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0 2px 12px;
-}
-h1 {
-  font-size: 25px;
-  letter-spacing: 1.5px;
-  margin: 0;
-  font-weight: 900;
-}
-h1 span { color: var(--green); }
-.version { color: var(--muted); font-size: 11px; margin-top: 3px; }
-button {
-  color: var(--text);
-  border: 1px solid var(--border);
-  background: #273244;
-  border-radius: 12px;
-  padding: 10px 12px;
-  cursor: pointer;
-}
-button:disabled { opacity: .35; cursor: default; }
-.stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 7px;
-  margin-bottom: 12px;
-}
-.stat {
-  background: var(--panel);
-  border-radius: 13px;
-  padding: 10px 9px;
-  min-width: 0;
-}
-.stat-label { color: var(--muted); font-size: 12px; }
-.stat-value {
-  font-size: 23px;
-  font-weight: 850;
-  margin-top: 3px;
-  overflow-wrap: anywhere;
-  font-variant-numeric: tabular-nums;
-}
-.stat:nth-child(2) .stat-value { color: var(--gold); }
-.stat:nth-child(3) .stat-value { color: var(--green); }
-.panel {
-  background: var(--panel);
-  border-radius: 17px;
-  padding: 14px;
-  margin-bottom: 13px;
-}
-.energy-head, .combo-head, .section-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-.energy-head { margin-bottom: 10px; }
-.energy-title { font-size: 15px; }
-.energy-value { color: var(--gold); font-size: 19px; }
-.energy-bars {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 5px;
-  margin-bottom: 10px;
-}
-.energy-bar {
-  height: 8px;
-  background: #374151;
-  border-radius: 20px;
-}
-.energy-bar.active { background: var(--gold); }
-.erase-button {
-  width: 100%;
-  border-radius: 28px;
-  background: transparent;
-  border: 1px solid #4b5563;
-  color: #d1d5db;
-  padding: 11px 8px;
-  margin-bottom: 12px;
-}
-.erase-button.active {
-  border-color: var(--gold);
-  color: var(--gold);
-  background: #fbbf2414;
-}
-.combo-head { font-size: 14px; margin-bottom: 9px; }
-.combo-count { color: #c4b5fd; }
-.combo-bars {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 5px;
-}
-.combo-bar {
-  height: 8px;
-  border-radius: 20px;
-  background: #374151;
-}
-.combo-bar.active { background: var(--purple); }
-.combo-hint {
-  color: var(--purple);
-  font-size: 11px;
-  margin-top: 7px;
-  min-height: 14px;
-}
-.board-panel { padding: 9px; }
-.board {
-  display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
-  gap: 4px;
-  width: 100%;
-  aspect-ratio: 1;
-  touch-action: manipulation;
-}
+button { font:inherit; cursor:pointer; color:inherit; }
+button:disabled { opacity:.4; cursor:default; }
+.app { max-width:460px; margin:0 auto; padding:12px 12px 28px; }
+header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+h1 { font-size:25px; letter-spacing:1.5px; margin:0; font-weight:900; }
+h1 span { color:var(--green); }
+.version { color:var(--muted); font-size:11px; margin-top:3px; }
+button { border:1px solid var(--border); background:#273244; border-radius:12px; padding:10px 12px; }
+.stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; margin-bottom:12px; }
+.stat { background:var(--panel); border-radius:13px; padding:10px 9px; min-width:0; }
+.stat-label { color:var(--muted); font-size:12px; }
+.stat-value { font-size:23px; font-weight:850; margin-top:3px; overflow-wrap:anywhere; font-variant-numeric:tabular-nums; }
+.stat:nth-child(2) .stat-value { color:var(--gold); }
+.stat:nth-child(3) .stat-value { color:var(--green); }
+.panel { background:var(--panel); border-radius:17px; padding:14px; margin-bottom:13px; }
+.energy-head,.combo-head,.section-head { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.energy-head { margin-bottom:10px; }
+.energy-title { font-size:15px; }
+.energy-value { color:var(--gold); font-size:19px; }
+.energy-bars { display:grid; grid-template-columns:repeat(5,1fr); gap:5px; margin-bottom:10px; }
+.energy-bar { height:8px; background:#374151; border-radius:20px; }
+.energy-bar.active { background:var(--gold); }
+.erase-button { width:100%; border-radius:28px; background:transparent; border:1px solid #4b5563; color:#d1d5db; padding:11px 8px; margin-bottom:12px; }
+.erase-button.active { border-color:var(--gold); color:var(--gold); background:#fbbf2414; }
+.combo-head { font-size:14px; margin-bottom:9px; }
+.combo-count { color:#c4b5fd; }
+.combo-bars { display:grid; grid-template-columns:repeat(3,1fr); gap:5px; }
+.combo-bar { height:8px; border-radius:20px; background:#374151; }
+.combo-bar.active { background:var(--purple); }
+.combo-hint { color:#c4b5fd; font-size:11px; margin-top:7px; min-height:14px; }
+.board-panel { padding:9px; }
+.board { display:grid; grid-template-columns:repeat(8,minmax(0,1fr)); gap:4px; width:100%; aspect-ratio:1; }
 .cell {
-  position: relative;
-  min-width: 0;
-  min-height: 0;
-  border-radius: 6px;
-  background: #374151;
-  border: 1px solid #4b5563;
-  padding: 0;
-  display: grid;
-  place-items: center;
+  position:relative; min-width:0; min-height:0; width:100%; height:100%;
+  border-radius:6px; background:var(--cell); border:1px solid #4b5563;
+  padding:0; display:grid; place-items:center;
 }
-.cell.filled { border-color: #ffffff18; }
-.cell.blue { background: var(--blue); }
-.cell.green { background: var(--green); }
-.cell.purple { background: #8b7bd1; }
-.cell.pink { background: #b56a9b; }
-.cell.orange { background: #fb923c; }
-.cell.lucky {
-  background: var(--gold);
-  border: 2px solid #fff0a5;
-}
-.star {
-  color: #854d0e;
-  font-size: clamp(10px, 3.1vw, 16px);
-  line-height: 1;
-}
-.section-head { margin-bottom: 12px; }
-.section-title { font-size: 16px; font-weight: 750; }
-.section-note { color: var(--muted); font-size: 12px; }
-.pieces {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 9px;
-}
+.cell.filled.blue { background:var(--blue); }
+.cell.filled.green { background:var(--green); }
+.cell.filled.purple { background:var(--purple); }
+.cell.filled.pink { background:var(--pink); }
+.cell.filled.orange { background:var(--orange); }
+.cell.filled.lucky { background:var(--gold); border:2px solid #fff0a5; }
+.star { color:#854d0e; font-size:clamp(10px,3.1vw,16px); line-height:1; pointer-events:none; }
+.section-head { margin-bottom:12px; }
+.section-title { font-size:16px; font-weight:750; }
+.section-note { color:var(--muted); font-size:12px; }
+.pieces { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; }
 .piece {
-  min-width: 0;
-  height: 116px;
-  background: #182231;
-  border: 1.5px solid #374151;
-  border-radius: 15px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 8px 3px;
+  min-width:0; height:116px; width:100%; overflow:hidden;
+  background:#182231; border:1.5px solid #374151; border-radius:15px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:12px; padding:8px 3px;
 }
-.piece.selected {
-  border: 2px solid #c4b5fd;
-  background: #45336c;
-}
-.piece.used { opacity: .65; }
-.piece:disabled { opacity: .55; }
+.piece.selected { border:2px solid #c4b5fd; background:#45336c; }
+.piece.used { opacity:.65; }
 .mini-grid {
-  display: grid;
-  gap: 3px;
-  align-content: center;
-  justify-content: center;
+  display:grid; gap:3px; justify-content:center; align-content:center;
+  width:max-content; max-width:100%; flex:0 0 auto;
+  grid-auto-flow:row;
 }
 .mini-cell {
-  width: clamp(9px, 3.2vw, 14px);
-  height: clamp(9px, 3.2vw, 14px);
-  border-radius: 2px;
-  background: var(--green);
+  display:block; width:12px; height:12px; min-width:12px; min-height:12px;
+  max-width:12px; max-height:12px; box-sizing:border-box;
+  border-radius:3px; background:var(--piece-color,var(--green));
+  border:1px solid #ffffff25; flex:none;
 }
-.mini-cell.empty { background: transparent; }
+.mini-cell.empty { background:transparent!important; border-color:transparent; }
 .mini-cell.lucky {
-  background: var(--gold);
-  border: 1px solid #fff0a5;
+  background:var(--gold)!important; border:1px solid #fff0a5;
+  position:relative;
 }
-.piece-name { color: #d1d5db; font-size: 12px; }
-.used-mark { color: var(--green); font-size: 22px; }
-.message {
-  font-size: 13px;
-  min-height: 22px;
-  margin: 9px 1px 0;
-  color: #d1d5db;
-  line-height: 1.5;
+.mini-cell.lucky::after {
+  content:"★"; position:absolute; inset:0; display:grid; place-items:center;
+  color:#854d0e; font-size:10px; line-height:1;
 }
-.message.good { color: var(--green); }
-.message.gold { color: var(--gold); }
-.gameover {
-  display: none;
-  background: #861f1f;
-  border-radius: 15px;
-  padding: 15px;
-  margin: 12px 0;
-}
-.gameover.show { display: block; }
-.gameover-title { font-size: 19px; margin-bottom: 6px; }
-.gameover p { margin: 0; line-height: 1.6; color: #fee2e2; }
-.info-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-.info-item {
-  background: #182231;
-  border-radius: 11px;
-  padding: 10px;
-}
-.info-label { color: var(--muted); font-size: 11px; }
-.info-value { font-size: 18px; font-weight: 800; margin-top: 4px; }
-.rules { font-size: 13px; line-height: 1.9; color: #d1d5db; }
-.rules p { margin: 5px 0; }
-.rules strong { color: white; }
-.bottom-buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-top: 12px;
-}
-.primary {
-  background: var(--green);
-  border-color: var(--green);
-  color: #052e26;
-  font-weight: 800;
-}
-.overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 20;
-  background: #030712bb;
-  padding: 20px;
-  align-items: center;
-  justify-content: center;
-}
-.overlay.show { display: flex; }
-.dialog {
-  width: 100%;
-  max-width: 350px;
-  background: var(--panel);
-  border: 1px solid #4b5563;
-  border-radius: 20px;
-  padding: 22px;
-}
-.dialog h2 { margin: 0 0 10px; }
-.dialog p { color: #d1d5db; line-height: 1.7; }
-.dialog button { width: 100%; margin-top: 8px; }
-@media (max-width: 350px) {
-  .app { padding: 9px 8px 22px; }
-  .board { gap: 3px; }
-  .cell { border-radius: 4px; }
-  .piece { height: 103px; }
-  .stat { padding: 8px 6px; }
-  .stat-value { font-size: 20px; }
+.piece-name { color:#d1d5db; font-size:12px; }
+.used-mark { color:var(--green); font-size:22px; }
+.message { font-size:13px; min-height:22px; margin:9px 1px 0; color:#d1d5db; line-height:1.5; }
+.message.good { color:var(--green); }
+.message.gold { color:var(--gold); }
+.gameover { display:none; background:#861f1f; border-radius:15px; padding:15px; margin:12px 0; }
+.gameover.show { display:block; }
+.gameover-title { font-size:19px; margin-bottom:6px; }
+.gameover p { margin:0; line-height:1.6; color:#fee2e2; }
+.info-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.info-item { background:#182231; border-radius:11px; padding:10px; }
+.info-label { color:var(--muted); font-size:11px; }
+.info-value { font-size:18px; font-weight:800; margin-top:4px; }
+.rules { font-size:13px; line-height:1.9; color:#d1d5db; }
+.rules p { margin:5px 0; }
+.rules strong { color:white; }
+.bottom-buttons { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+.primary { background:var(--green); border-color:var(--green); color:#052e26; font-weight:800; }
+.overlay { display:none; position:fixed; inset:0; z-index:20; background:#030712bb; padding:20px; align-items:center; justify-content:center; }
+.overlay.show { display:flex; }
+.dialog { width:100%; max-width:350px; background:var(--panel); border:1px solid #4b5563; border-radius:20px; padding:22px; }
+.dialog h2 { margin:0 0 10px; }
+.dialog p { color:#d1d5db; line-height:1.7; }
+.dialog button { width:100%; margin-top:8px; }
+@media(max-width:350px) {
+  .app { padding:9px 8px 22px; }
+  .board { gap:3px; }
+  .cell { border-radius:4px; }
+  .piece { height:103px; }
+  .stat { padding:8px 6px; }
+  .stat-value { font-size:20px; }
+  .mini-cell { width:10px; height:10px; min-width:10px; min-height:10px; max-width:10px; max-height:10px; }
 }
 </style>
 </head>
 <body>
 <main class="app">
-  <header>
-    <div>
-      <h1>BLOCK <span>POP</span></h1>
-      <div class="version">PLAN · CLEAR · COMBO　/　3.2</div>
-    </div>
-    <button id="reset-top">リセット</button>
-  </header>
+<header>
+  <div><h1>BLOCK <span>POP</span></h1><div class="version">PLAN · CLEAR · COMBO / 3.2</div></div>
+  <button id="reset-top">リセット</button>
+</header>
 
-  <section class="stats">
-    <div class="stat">
-      <div class="stat-label">スコア</div>
-      <div class="stat-value" id="score">0</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">連続消し</div>
-      <div class="stat-value" id="streak">0</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">全消し</div>
-      <div class="stat-value" id="all-clears">0</div>
-    </div>
-  </section>
+<section class="stats">
+  <div class="stat"><div class="stat-label">スコア</div><div class="stat-value" id="score">0</div></div>
+  <div class="stat"><div class="stat-label">連続消し</div><div class="stat-value" id="streak">0</div></div>
+  <div class="stat"><div class="stat-label">全消し</div><div class="stat-value" id="all-clears">0</div></div>
+</section>
 
-  <section class="panel">
-    <div class="energy-head">
-      <span class="energy-title">⚡ エネルギー</span>
-      <span class="energy-value"><span id="energy">5</span>/5</span>
-    </div>
-    <div class="energy-bars" id="energy-bars"></div>
-    <button class="erase-button" id="erase">エネルギー5で1マス消す</button>
+<section class="panel">
+  <div class="energy-head"><span class="energy-title">⚡ エネルギー</span><span class="energy-value"><span id="energy">5</span>/5</span></div>
+  <div class="energy-bars" id="energy-bars"></div>
+  <button class="erase-button" id="erase">エネルギー5で1マス消す</button>
+  <div class="combo-head"><span>コンボゲージ</span><span class="combo-count" id="combo-count">0/3</span></div>
+  <div class="combo-bars" id="combo-bars"></div>
+  <div class="combo-hint" id="combo-hint"></div>
+</section>
 
-    <div class="combo-head">
-      <span>コンボゲージ</span>
-      <span class="combo-count" id="combo-count">0/3</span>
-    </div>
-    <div class="combo-bars" id="combo-bars"></div>
-    <div class="combo-hint" id="combo-hint"></div>
-  </section>
+<section class="panel board-panel"><div class="board" id="board"></div></section>
 
-  <section class="panel board-panel">
-    <div class="board" id="board"></div>
-  </section>
+<section class="panel">
+  <div class="section-head"><span class="section-title">ブロックを選択</span><span class="section-note">3つから選ぶ</span></div>
+  <div class="pieces" id="pieces"></div>
+  <div class="message" id="message">ブロックを選んで、盤面に置こう！</div>
+</section>
 
-  <section class="panel">
-    <div class="section-head">
-      <span class="section-title">ブロックを選択</span>
-      <span class="section-note">3つから選ぶ</span>
-    </div>
-    <div class="pieces" id="pieces"></div>
-    <div class="message" id="message">ブロックを選んで、盤面に置こう！</div>
-  </section>
+<section class="gameover" id="gameover">
+  <div class="gameover-title">GAME OVER</div>
+  <p id="gameover-text"></p>
+  <button class="primary" id="retry">もう一度プレイ</button>
+</section>
 
-  <section class="gameover" id="gameover">
-    <div class="gameover-title">GAME OVER</div>
-    <p id="gameover-text">GAME OVER！最終スコア 0 点。リセットして再挑戦！</p>
-    <button class="primary" id="retry">もう一度プレイ</button>
-  </section>
-
-  <section class="panel">
-    <div class="section-head">
-      <span class="section-title">記録・ルール</span>
-      <button id="rules-toggle">ルールを見る</button>
-    </div>
-    <div class="info-grid">
-      <div class="info-item">
-        <div class="info-label">最高スコア（この画面内）</div>
-        <div class="info-value" id="best">0</div>
-      </div>
-      <div class="info-item">
-        <div class="info-label">消した列</div>
-        <div class="info-value" id="total-lines">0</div>
-      </div>
-    </div>
-    <div class="rules" id="rules" hidden>
-      <p>・縦横の列が埋まると消える。</p>
-      <p>・全消しで5,000点。</p>
-      <p>・エネルギー5で1マス消去。</p>
-      <p>・ゲージ3で次の配置が2倍。</p>
-      <p>・金色の★を消すと250点。</p>
-      <p>・ブロックを置くと、置いたマス数に応じて得点。</p>
-      <p>・最高スコアはこのブラウザ内に保存される。</p>
-    </div>
-    <div class="bottom-buttons">
-      <button id="reset-bottom">リセット</button>
-      <button id="new-game" class="primary">新しく始める</button>
-    </div>
-  </section>
+<section class="panel">
+  <div class="section-head"><span class="section-title">記録・ルール</span><button id="rules-toggle">ルールを見る</button></div>
+  <div class="info-grid">
+    <div class="info-item"><div class="info-label">最高スコア（この画面内）</div><div class="info-value" id="best">0</div></div>
+    <div class="info-item"><div class="info-label">消した列</div><div class="info-value" id="total-lines">0</div></div>
+  </div>
+  <div class="rules" id="rules" hidden>
+    <p>・縦横の列が埋まると消える。</p>
+    <p>・全消しで5,000点。</p>
+    <p>・エネルギー5で1マス消去。</p>
+    <p>・ゲージ3で次の配置が2倍。</p>
+    <p>・金色の★を消すと250点。</p>
+    <p>・最高スコアはこのブラウザ内に保存される。</p>
+  </div>
+  <div class="bottom-buttons"><button id="reset-bottom">リセット</button><button id="new-game" class="primary">新しく始める</button></div>
+</section>
 </main>
 
 <div class="overlay" id="confirm-overlay">
-  <div class="dialog">
-    <h2>リセットしますか？</h2>
-    <p>現在のゲームを終了して、最初からやり直します。</p>
-    <button class="primary" id="confirm-reset">リセットする</button>
-    <button id="cancel-reset">キャンセル</button>
-  </div>
+  <div class="dialog"><h2>リセットしますか？</h2><p>現在のゲームを終了して、最初からやり直します。</p><button class="primary" id="confirm-reset">リセットする</button><button id="cancel-reset">キャンセル</button></div>
 </div>
 
 <script>
 (() => {
-  "use strict";
+"use strict";
+const N=8, MAX_ENERGY=5;
+const COLORS=["blue","green","purple","pink","orange"];
+const COLOR_VALUES={
+  blue:"#60a5fa", green:"#34d399", purple:"#8b7bd1",
+  pink:"#b56a9b", orange:"#fb923c"
+};
 
-  const N = 8;
-  const MAX_ENERGY = 5;
+// BLOCK POP 3.2：3×3の重みは7
+const SHAPES=[
+ {name:"1マス",weight:8,cells:[[0,0]]},
+ {name:"棒3",weight:7,cells:[[0,0],[1,0],[2,0]]},
+ {name:"棒4",weight:5,cells:[[0,0],[1,0],[2,0],[3,0]]},
+ {name:"2×2",weight:8,cells:[[0,0],[1,0],[0,1],[1,1]]},
+ {name:"L字",weight:3,cells:[[0,0],[0,1],[0,2],[1,2]]},
+ {name:"3×2",weight:7,cells:[[0,0],[1,0],[2,0],[0,1],[1,1],[2,1]]},
+ {name:"3×3",weight:7,cells:[[0,0],[1,0],[2,0],[0,1],[1,1],[2,1],[0,2],[1,2],[2,2]]},
+ {name:"T字",weight:7,cells:[[0,0],[1,0],[2,0],[1,1]]},
+ {name:"棒2",weight:7,cells:[[0,0],[1,0]]}
+];
+const $=id=>document.getElementById(id);
+let board,pieces,selected,score,energy,combo,streak,allClears,totalLines,best,doubleNext,eraseMode,ended;
 
-  const COLORS = ["blue", "green", "purple", "pink", "orange"];
-
-  // 重みは3.2仕様。3×3の重みは7。
-  const SHAPES = [
-    { name: "1マス", weight: 8, cells: [[0,0]] },
-    { name: "棒3", weight: 7, cells: [[0,0],[1,0],[2,0]] },
-    { name: "棒4", weight: 5, cells: [[0,0],[1,0],[2,0],[3,0]] },
-    { name: "2×2", weight: 8, cells: [[0,0],[1,0],[0,1],[1,1]] },
-    { name: "L字", weight: 3, cells: [[0,0],[0,1],[0,2],[1,2]] },
-    { name: "3×2", weight: 7, cells: [[0,0],[1,0],[2,0],[0,1],[1,1],[2,1]] },
-    { name: "3×3", weight: 7, cells: [
-      [0,0],[1,0],[2,0],
-      [0,1],[1,1],[2,1],
-      [0,2],[1,2],[2,2]
-    ]},
-    { name: "T字", weight: 7, cells: [[0,0],[1,0],[2,0],[1,1]] },
-    { name: "棒2", weight: 7, cells: [[0,0],[1,0]] }
-  ];
-
-  const $ = id => document.getElementById(id);
-
-  let board, pieces, selected, score, energy, combo;
-  let streak, allClears, totalLines, best;
-  let doubleNext, eraseMode, ended, luckySerial;
-  let resetPending = false;
-
-  function loadBest() {
-    try {
-      return Number(localStorage.getItem("blockPop32Best")) || 0;
-    } catch (_) {
-      return 0;
-    }
-  }
-
-  function saveBest() {
-    try {
-      localStorage.setItem("blockPop32Best", String(best));
-    } catch (_) {}
-  }
-
-  function randomShape() {
-    const total = SHAPES.reduce((sum, s) => sum + s.weight, 0);
-    let value = Math.random() * total;
-    for (const shape of SHAPES) {
-      value -= shape.weight;
-      if (value < 0) return shape;
-    }
-    return SHAPES[0];
-  }
-
-  function createPiece() {
-    const shape = randomShape();
-    luckySerial++;
-    // ラッキーブロックには金色の★マスを1つ付けることがある。
-    const lucky = Math.random() < 0.18;
-    let luckyIndex = -1;
-    if (lucky) luckyIndex = Math.floor(Math.random() * shape.cells.length);
-
-    return {
-      name: shape.name,
-      cells: shape.cells.map(([x,y]) => [x,y]),
-      color: COLORS[Math.floor(Math.random() * COLORS.length)],
-      luckyIndex,
-      used: false
-    };
-  }
-
-  function emptyBoard() {
-    return Array.from({ length: N }, () => Array(N).fill(null));
-  }
-
-  function startGame() {
-    board = emptyBoard();
-    pieces = [];
-    selected = -1;
-    score = 0;
-    energy = MAX_ENERGY;
-    combo = 0;
-    streak = 0;
-    allClears = 0;
-    totalLines = 0;
-    doubleNext = false;
-    eraseMode = false;
-    ended = false;
-    luckySerial = 0;
-    newPieces();
-    $("gameover").classList.remove("show");
-    $("confirm-overlay").classList.remove("show");
-    setMessage("ブロックを選んで、盤面に置こう！");
-    render();
-  }
-
-  function newPieces() {
-    pieces = [createPiece(), createPiece(), createPiece()];
-    selected = -1;
-  }
-
-  function setMessage(text, kind = "") {
-    const el = $("message");
-    el.textContent = text;
-    el.className = "message" + (kind ? " " + kind : "");
-  }
-
-  function addScore(points) {
-    score += points;
-    if (score > best) {
-      best = score;
-      saveBest();
-    }
-  }
-
-  function dimensions(piece) {
-    return {
-      w: Math.max(...piece.cells.map(c => c[0])) + 1,
-      h: Math.max(...piece.cells.map(c => c[1])) + 1
-    };
-  }
-
-  function canPlace(piece, x, y) {
-    return piece.cells.every(([dx,dy]) => {
-      const xx = x + dx, yy = y + dy;
-      return xx >= 0 && xx < N && yy >= 0 && yy < N && board[yy][xx] === null;
-    });
-  }
-
-  function hasAnyMove() {
-    for (const piece of pieces) {
-      if (piece.used) continue;
-      for (let y = 0; y < N; y++) {
-        for (let x = 0; x < N; x++) {
-          if (canPlace(piece, x, y)) return true;
-        }
-      }
-    }
+function emptyBoard(){return Array.from({length:N},()=>Array(N).fill(null));}
+function weightedShape(){
+  const total=SHAPES.reduce((s,v)=>s+v.weight,0);
+  let r=Math.random()*total;
+  for(const shape of SHAPES){r-=shape.weight;if(r<0)return shape;}
+  return SHAPES[0];
+}
+function createPiece(){
+  const shape=weightedShape();
+  const lucky=Math.random()<0.18;
+  return {
+    name:shape.name,
+    cells:shape.cells.map(([x,y])=>[x,y]),
+    color:COLORS[Math.floor(Math.random()*COLORS.length)],
+    luckyIndex:lucky?Math.floor(Math.random()*shape.cells.length):-1,
+    used:false
+  };
+}
+function newPieces(){pieces=[createPiece(),createPiece(),createPiece()];selected=-1;}
+function setMessage(t,kind=""){
+  $("message").textContent=t;
+  $("message").className="message"+(kind?" "+kind:"");
+}
+function addScore(n){
+  score+=n;
+  if(score>best){best=score;try{localStorage.setItem("blockPop32Best",String(best));}catch(e){}}
+}
+function canPlace(piece,x,y){
+  return piece.cells.every(([dx,dy])=>{
+    const xx=x+dx,yy=y+dy;
+    return xx>=0&&xx<N&&yy>=0&&yy<N&&board[yy][xx]===null;
+  });
+}
+function hasAnyMove(){
+  return pieces.some(p=>{
+    if(p.used)return false;
+    for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(canPlace(p,x,y))return true;
     return false;
-  }
-
-  function renderBoard() {
-    const root = $("board");
-    root.innerHTML = "";
-
-    for (let y = 0; y < N; y++) {
-      for (let x = 0; x < N; x++) {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "cell";
-        button.setAttribute("aria-label", `行${y+1}、列${x+1}`);
-        const value = board[y][x];
-
-        if (value) {
-          button.classList.add("filled", value.color);
-          if (value.lucky) {
-            button.classList.add("lucky");
-            const star = document.createElement("span");
-            star.className = "star";
-            star.textContent = "☆";
-            button.appendChild(star);
-          }
-        }
-
-        button.addEventListener("click", () => onCellClick(x,y));
-        root.appendChild(button);
+  });
+}
+function renderBoard(){
+  const root=$("board");root.innerHTML="";
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++){
+    const b=document.createElement("button");
+    b.type="button";b.className="cell";
+    b.setAttribute("aria-label",`行${y+1}、列${x+1}`);
+    const v=board[y][x];
+    if(v){
+      b.classList.add("filled",v.color);
+      if(v.lucky){
+        b.classList.add("lucky");
+        const s=document.createElement("span");s.className="star";s.textContent="★";b.appendChild(s);
       }
     }
+    b.addEventListener("click",()=>onCellClick(x,y));
+    root.appendChild(b);
   }
-
-  function renderPieces() {
-    const root = $("pieces");
-    root.innerHTML = "";
-
-    pieces.forEach((piece, index) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "piece";
-      if (selected === index) button.classList.add("selected");
-      if (piece.used) button.classList.add("used");
-      button.disabled = piece.used || ended;
-
-      const {w,h} = dimensions(piece);
-      const grid = document.createElement("div");
-      grid.className = "mini-grid";
-      grid.style.gridTemplateColumns = `repeat(${w}, 1fr)`;
-      grid.style.gridTemplateRows = `repeat(${h}, 1fr)`;
-
-      const occupied = new Map();
-      piece.cells.forEach(([x,y], cellIndex) => {
-        occupied.set(`${x},${y}`, cellIndex);
-      });
-
-      for (let y = 0; y < h; y++) {
-        for (let x = 0; x < w; x++) {
-          const mini = document.createElement("div");
-          mini.className = "mini-cell";
-          const key = `${x},${y}`;
-
-          if (!occupied.has(key)) {
-            mini.classList.add("empty");
-          } else {
-            mini.classList.add(piece.color);
-            mini.style.background = `var(--${piece.color === "pink" ? "pink" : piece.color === "orange" ? "orange" : piece.color === "purple" ? "purple" : piece.color})`;
-            if (occupied.get(key) === piece.luckyIndex) {
-              mini.classList.add("lucky");
-            }
-          }
-          grid.appendChild(mini);
-        }
+}
+function dimensions(p){
+  return {w:Math.max(...p.cells.map(c=>c[0]))+1,h:Math.max(...p.cells.map(c=>c[1]))+1};
+}
+function renderPieces(){
+  const root=$("pieces");root.innerHTML="";
+  pieces.forEach((p,i)=>{
+    const b=document.createElement("button");
+    b.type="button";b.className="piece";
+    if(i===selected)b.classList.add("selected");
+    if(p.used)b.classList.add("used");
+    b.disabled=p.used||ended;
+    const {w,h}=dimensions(p);
+    const grid=document.createElement("div");grid.className="mini-grid";
+    grid.style.gridTemplateColumns=`repeat(${w},12px)`;
+    grid.style.gridTemplateRows=`repeat(${h},12px)`;
+    const map=new Map();
+    p.cells.forEach(([x,y],idx)=>map.set(`${x},${y}`,idx));
+    // 形状の幅×高さを固定してから、各座標のマスを生成する
+    for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+      const cell=document.createElement("span");
+      cell.className="mini-cell";
+      const key=`${x},${y}`;
+      if(!map.has(key)){
+        cell.classList.add("empty");
+      }else if(map.get(key)===p.luckyIndex){
+        cell.classList.add("lucky");
+      }else{
+        cell.style.setProperty("--piece-color",COLOR_VALUES[p.color]||COLOR_VALUES.green);
       }
-
-      const name = document.createElement("div");
-      name.className = "piece-name";
-
-      if (piece.used) {
-        name.className = "used-mark";
-        name.textContent = "✓";
-      } else {
-        name.textContent = piece.name;
-      }
-
-      button.append(grid, name);
-      button.addEventListener("click", () => {
-        if (ended || piece.used) return;
-        selected = index;
-        eraseMode = false;
-        $("erase").classList.remove("active");
-        setMessage(piece.luckyIndex >= 0
-          ? "★ 金色のマスがあるブロック！置く場所を選ぼう。"
-          : "置きたい場所を盤面から選ぼう！");
-        render();
-      });
-      root.appendChild(button);
-    });
-  }
-
-  function renderMeters() {
-    $("energy").textContent = energy;
-    $("energy-bars").innerHTML = "";
-    for (let i = 0; i < MAX_ENERGY; i++) {
-      const bar = document.createElement("div");
-      bar.className = "energy-bar" + (i < energy ? " active" : "");
-      $("energy-bars").appendChild(bar);
+      grid.appendChild(cell);
     }
-
-    $("combo-count").textContent = `${combo}/3`;
-    $("combo-bars").innerHTML = "";
-    for (let i = 0; i < 3; i++) {
-      const bar = document.createElement("div");
-      bar.className = "combo-bar" + (i < combo ? " active" : "");
-      $("combo-bars").appendChild(bar);
-    }
-
-    $("combo-hint").textContent = doubleNext
-      ? "次のブロック配置は得点2倍！"
-      : "";
-    $("erase").disabled = ended || energy < 5;
-    $("erase").classList.toggle("active", eraseMode);
-  }
-
-  function renderStats() {
-    $("score").textContent = score.toLocaleString();
-    $("streak").textContent = streak.toLocaleString();
-    $("all-clears").textContent = allClears.toLocaleString();
-    $("best").textContent = best.toLocaleString();
-    $("total-lines").textContent = totalLines.toLocaleString();
-  }
-
-  function render() {
-    renderStats();
-    renderMeters();
-    renderBoard();
-    renderPieces();
-  }
-
-  function onCellClick(x, y) {
-    if (ended) return;
-
-    if (eraseMode) {
-      if (!board[y][x]) {
-        setMessage("消したいブロックのマスを選んでね。");
-        return;
-      }
-
-      board[y][x] = null;
-      energy -= 5;
-      eraseMode = false;
-      $("erase").classList.remove("active");
-      setMessage("⚡ 1マス消去した！");
+    const name=document.createElement("div");
+    name.className=p.used?"used-mark":"piece-name";
+    name.textContent=p.used?"✓":p.name;
+    b.append(grid,name);
+    b.addEventListener("click",()=>{
+      if(ended||p.used)return;
+      selected=i;eraseMode=false;$("erase").classList.remove("active");
+      setMessage(p.luckyIndex>=0?"★付きブロック！置く場所を選ぼう。":"置きたい場所を盤面から選ぼう！");
       render();
-      checkGameOver();
-      return;
-    }
-
-    if (selected < 0 || !pieces[selected] || pieces[selected].used) {
-      setMessage("先に下のブロックを選んでね。");
-      return;
-    }
-
-    const piece = pieces[selected];
-    if (!canPlace(piece, x, y)) {
-      setMessage("そこには置けないよ。別の場所を選ぼう！");
-      return;
-    }
-
-    const multiplier = doubleNext ? 2 : 1;
-    const count = piece.cells.length;
-
-    piece.cells.forEach(([dx,dy], index) => {
-      board[y+dy][x+dx] = {
-        color: piece.color,
-        lucky: index === piece.luckyIndex
-      };
     });
+    root.appendChild(b);
+  });
+}
+function renderMeters(){
+  $("energy").textContent=energy;
+  $("energy-bars").innerHTML="";
+  for(let i=0;i<MAX_ENERGY;i++){
+    const b=document.createElement("div");b.className="energy-bar"+(i<energy?" active":"");$("energy-bars").appendChild(b);
+  }
+  $("combo-count").textContent=`${combo}/3`;
+  $("combo-bars").innerHTML="";
+  for(let i=0;i<3;i++){
+    const b=document.createElement("div");b.className="combo-bar"+(i<combo?" active":"");$("combo-bars").appendChild(b);
+  }
+  $("combo-hint").textContent=doubleNext?"次のブロック配置は得点2倍！":"";
+  $("erase").disabled=ended||energy<5;
+  $("erase").classList.toggle("active",eraseMode);
+}
+function renderStats(){
+  $("score").textContent=score.toLocaleString();
+  $("streak").textContent=streak.toLocaleString();
+  $("all-clears").textContent=allClears.toLocaleString();
+  $("best").textContent=best.toLocaleString();
+  $("total-lines").textContent=totalLines.toLocaleString();
+}
+function render(){renderStats();renderMeters();renderBoard();renderPieces();}
 
-    addScore(count * 10 * multiplier);
-    doubleNext = false;
-    piece.used = true;
-    selected = -1;
+function onCellClick(x,y){
+  if(ended)return;
+  if(eraseMode){
+    if(!board[y][x]){setMessage("消したいブロックのマスを選んでね。");return;}
+    board[y][x]=null;energy-=5;eraseMode=false;
+    setMessage("⚡ 1マス消去した！");render();checkGameOver();return;
+  }
+  if(selected<0||!pieces[selected]||pieces[selected].used){
+    setMessage("先に下のブロックを選んでね。");return;
+  }
+  const p=pieces[selected];
+  if(!canPlace(p,x,y)){setMessage("そこには置けないよ。別の場所を選ぼう！");return;}
 
-    const fullRows = [];
-    const fullCols = [];
+  const multiplier=doubleNext?2:1;
+  addScore(p.cells.length*10*multiplier);
+  // ★のマスも通常マスと同じ座標計算を使う。形状自体は変更しない。
+  p.cells.forEach(([dx,dy],index)=>{
+    const tx=x+dx,ty=y+dy;
+    board[ty][tx]={
+      color:p.color,
+      lucky:index===p.luckyIndex
+    };
+  });
+  p.used=true;selected=-1;doubleNext=false;
 
-    for (let yy = 0; yy < N; yy++) {
-      if (board[yy].every(cell => cell !== null)) fullRows.push(yy);
-    }
-    for (let xx = 0; xx < N; xx++) {
-      if (board.every(row => row[xx] !== null)) fullCols.push(xx);
-    }
+  const rows=[],cols=[];
+  for(let yy=0;yy<N;yy++)if(board[yy].every(v=>v!==null))rows.push(yy);
+  for(let xx=0;xx<N;xx++)if(board.every(row=>row[xx]!==null))cols.push(xx);
 
-    const clearCells = new Set();
-    fullRows.forEach(yy => {
-      for (let xx = 0; xx < N; xx++) clearCells.add(`${xx},${yy}`);
-    });
-    fullCols.forEach(xx => {
-      for (let yy = 0; yy < N; yy++) clearCells.add(`${xx},${yy}`);
-    });
+  const clearSet=new Set();
+  rows.forEach(yy=>{for(let xx=0;xx<N;xx++)clearSet.add(`${xx},${yy}`);});
+  cols.forEach(xx=>{for(let yy=0;yy<N;yy++)clearSet.add(`${xx},${yy}`);});
 
-    let luckyCleared = 0;
-    clearCells.forEach(key => {
-      const [xx,yy] = key.split(",").map(Number);
-      const cell = board[yy][xx];
-      if (cell && cell.lucky) luckyCleared++;
-      board[yy][xx] = null;
-    });
+  let luckyCleared=0;
+  clearSet.forEach(key=>{
+    const [xx,yy]=key.split(",").map(Number);
+    if(board[yy][xx]?.lucky)luckyCleared++;
+    board[yy][xx]=null;
+  });
 
-    const lines = fullRows.length + fullCols.length;
-    let message = `配置！ +${(count * 10 * multiplier).toLocaleString()}点`;
-
-    if (lines > 0) {
-      addScore(lines * 100 * multiplier);
-      if (luckyCleared > 0) addScore(luckyCleared * 250 * multiplier);
-
-      totalLines += lines;
-      streak += lines;
-      combo += lines;
-
-      if (combo >= 3) {
-        combo -= 3;
-        doubleNext = true;
-      }
-
-      message = `${lines}列消去！ +${(lines * 100 * multiplier).toLocaleString()}点`;
-      if (luckyCleared) {
-        message += ` ★ボーナス +${(luckyCleared * 250 * multiplier).toLocaleString()}点`;
-      }
-      if (doubleNext) message += " 次の配置は2倍！";
-      setMessage(message, luckyCleared ? "gold" : "good");
-    } else {
-      streak = 0;
-      setMessage(message);
-    }
-
-    const empty = board.every(row => row.every(cell => cell === null));
-    if (empty) {
-      allClears++;
-      addScore(5000);
-      setMessage("全消し達成！ +5,000点ボーナス！", "gold");
-    }
-
-    if (pieces.every(p => p.used)) newPieces();
-
-    render();
-    checkGameOver();
+  const lines=rows.length+cols.length;
+  if(lines>0){
+    addScore(lines*100*multiplier);
+    if(luckyCleared)addScore(luckyCleared*250*multiplier);
+    totalLines+=lines;streak+=lines;combo+=lines;
+    if(combo>=3){combo%=3;doubleNext=true;}
+    let msg=`${lines}列消去！ +${(lines*100*multiplier).toLocaleString()}点`;
+    if(luckyCleared)msg+=` ★ボーナス +${(luckyCleared*250*multiplier).toLocaleString()}点`;
+    if(doubleNext)msg+=" 次の配置は2倍！";
+    setMessage(msg,luckyCleared?"gold":"good");
+  }else{
+    streak=0;setMessage(`ブロックを配置！ +${(p.cells.length*10*multiplier).toLocaleString()}点`);
   }
 
-  function checkGameOver() {
-    if (ended) return;
-    if (!hasAnyMove()) {
-      ended = true;
-      eraseMode = false;
-      $("gameover-text").textContent =
-        `GAME OVER！最終スコア ${score.toLocaleString()} 点。リセットして再挑戦！`;
-      $("gameover").classList.add("show");
-      render();
-    }
+  if(board.every(row=>row.every(v=>v===null))){
+    allClears++;addScore(5000);setMessage("全消し達成！ +5,000点ボーナス！","gold");
   }
+  if(pieces.every(v=>v.used))newPieces();
+  render();checkGameOver();
+}
+function checkGameOver(){
+  if(ended||hasAnyMove())return;
+  ended=true;eraseMode=false;
+  $("gameover-text").textContent=`GAME OVER！最終スコア ${score.toLocaleString()} 点。リセットして再挑戦！`;
+  $("gameover").classList.add("show");
+  render();
+}
+function startGame(){
+  board=emptyBoard();score=0;energy=MAX_ENERGY;combo=0;streak=0;
+  allClears=0;totalLines=0;doubleNext=false;eraseMode=false;ended=false;
+  selected=-1;newPieces();
+  $("gameover").classList.remove("show");
+  $("confirm-overlay").classList.remove("show");
+  setMessage("ブロックを選んで、盤面に置こう！");
+  render();
+}
+function askReset(){$("confirm-overlay").classList.add("show");}
 
-  function askReset() {
-    resetPending = true;
-    $("confirm-overlay").classList.add("show");
-  }
-
-  $("erase").addEventListener("click", () => {
-    if (ended || energy < 5) return;
-    selected = -1;
-    eraseMode = true;
-    setMessage("消したいマスをタップしてね。");
-    render();
-  });
-
-  $("reset-top").addEventListener("click", askReset);
-  $("reset-bottom").addEventListener("click", askReset);
-  $("new-game").addEventListener("click", askReset);
-  $("retry").addEventListener("click", startGame);
-
-  $("confirm-reset").addEventListener("click", () => {
-    if (resetPending) startGame();
-    resetPending = false;
-  });
-  $("cancel-reset").addEventListener("click", () => {
-    resetPending = false;
-    $("confirm-overlay").classList.remove("show");
-  });
-
-  $("rules-toggle").addEventListener("click", () => {
-    const rules = $("rules");
-    rules.hidden = !rules.hidden;
-    $("rules-toggle").textContent = rules.hidden ? "ルールを見る" : "閉じる";
-  });
-
-  best = loadBest();
-  startGame();
+$("erase").addEventListener("click",()=>{
+  if(ended||energy<5)return;
+  selected=-1;eraseMode=true;setMessage("消したいマスをタップしてね。");render();
+});
+$("reset-top").addEventListener("click",askReset);
+$("reset-bottom").addEventListener("click",askReset);
+$("new-game").addEventListener("click",askReset);
+$("retry").addEventListener("click",startGame);
+$("confirm-reset").addEventListener("click",startGame);
+$("cancel-reset").addEventListener("click",()=>$("confirm-overlay").classList.remove("show"));
+$("rules-toggle").addEventListener("click",()=>{
+  const r=$("rules");r.hidden=!r.hidden;$("rules-toggle").textContent=r.hidden?"ルールを見る":"閉じる";
+});
+try{best=Number(localStorage.getItem("blockPop32Best"))||0;}catch(e){best=0;}
+startGame();
 })();
 </script>
 </body>
